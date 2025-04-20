@@ -3,6 +3,11 @@
 #include <SDL.h>
 #include <cmath>
 #include "visualizations/SimpleVisualizer.h"
+#include "visualizations/MatrixVisualizer.h"
+#include "visualizations/Bars3DVisualizer.h"
+#include "visualizations/ParticleFountainVisualizer.h"
+#include "visualizations/NeonMeterVisualizer.h"
+#include "UI.h"
 
 namespace av {
 
@@ -11,6 +16,8 @@ Engine::Engine()
     , m_lastFrameTime(0.0)
     , m_deltaTime(0.0)
     , m_simpleVisualizer(nullptr)
+    , m_useBuiltInVisualizations(true)
+    , m_amplificationFactor(20.0f)
 {
     std::cout << "Audio Visualizer Engine created" << std::endl;
 }
@@ -23,6 +30,20 @@ Engine::~Engine()
 bool Engine::initialize(int width, int height, const std::string& title)
 {
     std::cout << "Initializing Audio Visualizer Engine..." << std::endl;
+    
+    // Debug SDL arrow key constants
+    std::cout << "SDL Key Constants Debug:" << std::endl;
+    std::cout << "  SDL_LEFT arrow key code: " << SDLK_LEFT << std::endl;
+    std::cout << "  SDL_RIGHT arrow key code: " << SDLK_RIGHT << std::endl;
+    std::cout << "  SDL_UP arrow key code: " << SDLK_UP << std::endl;
+    std::cout << "  SDL_DOWN arrow key code: " << SDLK_DOWN << std::endl;
+    
+    // Check if arrow key constants match expected values
+    if (SDLK_LEFT != 1073741904 || SDLK_RIGHT != 1073741903) {
+        std::cerr << "Warning: SDL arrow key constants don't match expected values!" << std::endl;
+    } else {
+        std::cout << "SDL arrow key constants match expected values." << std::endl;
+    }
     
     // Create window
     m_window = std::make_unique<Window>();
@@ -59,6 +80,38 @@ bool Engine::initialize(int width, int height, const std::string& title)
     m_simpleVisualizer = std::make_unique<SimpleVisualizer>();
     // Set initial size
     m_simpleVisualizer->onResize(width, height);
+    
+    // Initialize VisualizationManager with all available visualizers
+    m_visualizationManager = std::make_unique<VisualizationManager>();
+    
+    // Initialize the visualization manager manually instead of using initialize()
+    // Add NeonMeterVisualizer first (as the default)
+    m_visualizationManager->addVisualizer(std::make_unique<NeonMeterVisualizer>());
+    std::cout << "Added NeonMeterVisualizer to visualization manager" << std::endl;
+    
+    // Add SimpleVisualizer
+    m_visualizationManager->addVisualizer(std::make_unique<SimpleVisualizer>());
+    std::cout << "Added SimpleVisualizer to visualization manager" << std::endl;
+    
+    // Add our other visualizers
+    m_visualizationManager->addVisualizer(std::make_unique<MatrixVisualizer>());
+    std::cout << "Added MatrixVisualizer to visualization manager" << std::endl;
+    
+    m_visualizationManager->addVisualizer(std::make_unique<Bars3DVisualizer>());
+    std::cout << "Added Bars3DVisualizer to visualization manager" << std::endl;
+    
+    m_visualizationManager->addVisualizer(std::make_unique<ParticleFountainVisualizer>());
+    std::cout << "Added ParticleFountainVisualizer to visualization manager" << std::endl;
+    
+    // Set the current visualization to the ParticleFountainVisualizer (index 4)
+    m_visualizationManager->setCurrentVisualization(4);
+    std::cout << "Initial visualization set to: " << 
+        m_visualizationManager->getCurrentVisualizationName() << std::endl;
+    
+    // Initialize UI system
+    m_ui = std::make_unique<UI>(this);
+    m_ui->initialize();
+    std::cout << "User interface initialized" << std::endl;
     
     m_isRunning = true;
     m_lastFrameTime = 0.0;
@@ -154,6 +207,38 @@ void Engine::toggleFullscreen()
     }
 }
 
+void Engine::nextVisualization()
+{
+    if (m_visualizationManager) {
+        std::cout << "Before nextVisualization, current visualization: " << 
+            m_visualizationManager->getCurrentVisualizationName() << std::endl;
+        
+        m_visualizationManager->nextVisualization();
+        
+        std::cout << "After nextVisualization, switched to: " << 
+            m_visualizationManager->getCurrentVisualizationName() << std::endl;
+    }
+    else {
+        std::cout << "Error: VisualizationManager is null" << std::endl;
+    }
+}
+
+void Engine::previousVisualization()
+{
+    if (m_visualizationManager) {
+        std::cout << "Before previousVisualization, current visualization: " << 
+            m_visualizationManager->getCurrentVisualizationName() << std::endl;
+        
+        m_visualizationManager->previousVisualization();
+        
+        std::cout << "After previousVisualization, switched to: " << 
+            m_visualizationManager->getCurrentVisualizationName() << std::endl;
+    }
+    else {
+        std::cout << "Error: VisualizationManager is null" << std::endl;
+    }
+}
+
 void Engine::processFrame()
 {
     // Calculate delta time
@@ -168,6 +253,33 @@ void Engine::processFrame()
     
     // Process input
     m_inputManager->processEvents();
+
+    // Get mouse state for UI interactions
+    int mouseX, mouseY;
+    Uint32 mouseState = SDL_GetMouseState(&mouseX, &mouseY);
+    bool leftMouseDown = (mouseState & SDL_BUTTON(SDL_BUTTON_LEFT)) != 0;
+
+    // Debug mouse state only when it changes and if debug mode is enabled
+    static bool previousMouseDown = false;
+    static int previousMouseX = -1, previousMouseY = -1;
+    static bool debugMouse = false; // Set to true only when actively debugging mouse issues
+    
+    if (debugMouse && (leftMouseDown != previousMouseDown || 
+        (leftMouseDown && (mouseX != previousMouseX || mouseY != previousMouseY)))) {
+        std::cout << "Mouse button " << (leftMouseDown ? "DOWN" : "UP") << " at position " << mouseX << "," << mouseY << std::endl;
+    }
+    previousMouseDown = leftMouseDown;
+    previousMouseX = mouseX;
+    previousMouseY = mouseY;
+
+    // Process UI input with improved mouse tracking
+    if (m_ui) {
+        // Only log mouse state when in debug mode
+        if (debugMouse && (leftMouseDown || previousMouseDown)) {
+            std::cout << "Passing mouse state to UI: pos=" << mouseX << "," << mouseY << " leftButton=" << (leftMouseDown ? "down" : "up") << std::endl;
+        }
+        m_ui->processInput(mouseX, mouseY, leftMouseDown);
+    }
     
     // Check for quit event
     for (const auto& event : m_inputManager->getEvents()) {
@@ -175,6 +287,87 @@ void Engine::processFrame()
             (event.type == EventType::KeyDown && event.key.keyCode == SDLK_ESCAPE)) {
             m_isRunning = false;
             return;
+        }
+        
+        // Still handle keyboard input as fallback
+        if (event.type == EventType::KeyDown) {
+            int keyCode = event.key.keyCode;
+            std::cout << "Key pressed: " << keyCode << std::endl;
+            
+            // Check for specific key codes for arrow keys
+            const int SDL_RIGHT_ARROW = 1073741903; // Raw code for right arrow
+            const int SDL_LEFT_ARROW = 1073741904;  // Raw code for left arrow
+            const int SDL_UP_ARROW = 1073741906;    // Raw code for up arrow
+            const int SDL_DOWN_ARROW = 1073741905;  // Raw code for down arrow
+            
+            // Numpad keys for quick visualization switching
+            const int SDLK_KP_1 = 1073741913;
+            const int SDLK_KP_2 = 1073741914;
+            const int SDLK_KP_3 = 1073741915;
+            const int SDLK_KP_4 = 1073741916;
+            const int SDLK_KP_5 = 1073741917;
+            const int SDLK_KP_6 = 1073741918;
+            const int SDLK_KP_7 = 1073741919;
+            const int SDLK_KP_8 = 1073741920;
+            const int SDLK_KP_9 = 1073741921;
+            
+            // Check for right arrow
+            if (keyCode == SDLK_RIGHT || keyCode == SDL_RIGHT_ARROW) {
+                std::cout << "RIGHT ARROW KEY detected - raw value: " << keyCode << std::endl;
+                nextVisualization();
+            }
+            // Check for left arrow
+            else if (keyCode == SDLK_LEFT || keyCode == SDL_LEFT_ARROW) {
+                std::cout << "LEFT ARROW KEY detected - raw value: " << keyCode << std::endl;
+                previousVisualization();
+            }
+            // Check for up arrow
+            else if (keyCode == SDLK_UP || keyCode == SDL_UP_ARROW) {
+                std::cout << "UP ARROW KEY detected - raw value: " << keyCode << std::endl;
+                increaseAmplificationFactor(1.0f);
+            }
+            // Check for down arrow
+            else if (keyCode == SDLK_DOWN || keyCode == SDL_DOWN_ARROW) {
+                std::cout << "DOWN ARROW KEY detected - raw value: " << keyCode << std::endl;
+                decreaseAmplificationFactor(1.0f);
+            }
+            // Numpad keys for direct visualization selection
+            else if (keyCode == SDLK_KP_1) {
+                std::cout << "Numpad 1 pressed - switching to visualization index 0" << std::endl;
+                if (m_visualizationManager) m_visualizationManager->setCurrentVisualization(0);
+            }
+            else if (keyCode == SDLK_KP_2) {
+                std::cout << "Numpad 2 pressed - switching to visualization index 1" << std::endl;
+                if (m_visualizationManager) m_visualizationManager->setCurrentVisualization(1);
+            }
+            else if (keyCode == SDLK_KP_3) {
+                std::cout << "Numpad 3 pressed - switching to visualization index 2" << std::endl;
+                if (m_visualizationManager) m_visualizationManager->setCurrentVisualization(2);
+            }
+            else if (keyCode == SDLK_KP_4) {
+                std::cout << "Numpad 4 pressed - switching to visualization index 3" << std::endl;
+                if (m_visualizationManager) m_visualizationManager->setCurrentVisualization(3);
+            }
+            else if (keyCode == SDLK_KP_5) {
+                std::cout << "Numpad 5 pressed - switching to visualization index 4" << std::endl;
+                if (m_visualizationManager) m_visualizationManager->setCurrentVisualization(4);
+            }
+            else if (keyCode == SDLK_KP_6) {
+                std::cout << "Numpad 6 pressed - switching to visualization index 5" << std::endl;
+                if (m_visualizationManager) m_visualizationManager->setCurrentVisualization(5);
+            }
+            else if (keyCode == SDLK_KP_7) {
+                std::cout << "Numpad 7 pressed - switching to visualization index 6" << std::endl;
+                if (m_visualizationManager) m_visualizationManager->setCurrentVisualization(6);
+            }
+            else if (keyCode == SDLK_KP_8) {
+                std::cout << "Numpad 8 pressed - switching to visualization index 7" << std::endl;
+                if (m_visualizationManager) m_visualizationManager->setCurrentVisualization(7);
+            }
+            else if (keyCode == SDLK_KP_9) {
+                std::cout << "Numpad 9 pressed - switching to visualization index 8" << std::endl;
+                if (m_visualizationManager) m_visualizationManager->setCurrentVisualization(8);
+            }
         }
         
         // Handle left mouse button for dragging in borderless mode
@@ -234,28 +427,37 @@ void Engine::processFrame()
     
     // Update script
     const AudioData& audioData = m_audioProcessor->getAudioData();
-    if (m_scriptEngine && m_scriptEngine->isScriptLoaded()) {
+    if (m_scriptEngine && m_scriptEngine->isScriptLoaded() && !m_useBuiltInVisualizations) {
         m_scriptEngine->onUpdate(m_deltaTime, audioData);
     }
     
-    // This section is enabled now - use the Renderer
-    
-    // Render frame
+    // Begin rendering
     m_renderer->beginFrame();
     
-    if (m_scriptEngine && m_scriptEngine->isScriptLoaded()) {
+    // Render visualization
+    if (m_scriptEngine && m_scriptEngine->isScriptLoaded() && !m_useBuiltInVisualizations) {
+        // Use script-based visualization
         m_scriptEngine->onRender(m_renderer.get());
     }
+    else if (m_visualizationManager) {
+        // Use built-in visualizations from the manager
+        m_visualizationManager->renderCurrentVisualization(m_renderer.get(), audioData);
+    }
     else if (m_simpleVisualizer) {
-        // Use the SimpleVisualizer instead of the default visualization
+        // Fallback to simple visualizer if visualization manager is not available
         m_simpleVisualizer->render(m_renderer.get(), audioData);
     }
     else {
-        // Fallback to default visualization if SimpleVisualizer fails
+        // Last resort fallback
         renderDefaultVisualization(audioData);
     }
     
-    // Add this line to complete rendering and swap buffers
+    // Render UI on top
+    if (m_ui) {
+        m_ui->render(m_renderer.get());
+    }
+    
+    // Complete rendering and swap buffers
     m_renderer->endFrame();
 }
 
@@ -272,6 +474,11 @@ void Engine::resizeRenderer()
         // Notify simple visualizer of size change
         if (m_simpleVisualizer) {
             m_simpleVisualizer->onResize(width, height);
+        }
+        
+        // Resize UI
+        if (m_ui) {
+            m_ui->onResize(width, height);
         }
         
         std::cout << "Resized renderer to " << width << "x" << height << std::endl;

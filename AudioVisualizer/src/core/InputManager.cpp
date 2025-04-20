@@ -49,8 +49,20 @@ void InputManager::processEvents()
             }
             
             case SDL_KEYDOWN: {
+                // Special debugging for arrow keys
+                if (event.key.keysym.sym == SDLK_LEFT || event.key.keysym.sym == SDLK_RIGHT ||
+                    event.key.keysym.sym == SDLK_UP || event.key.keysym.sym == SDLK_DOWN) {
+                    std::cout << "ARROW KEY DETECTED IN INPUT MANAGER: " << event.key.keysym.sym << std::endl;
+                    std::cout << "SDLK_LEFT=" << SDLK_LEFT << " SDLK_RIGHT=" << SDLK_RIGHT 
+                             << " SDLK_UP=" << SDLK_UP << " SDLK_DOWN=" << SDLK_DOWN << std::endl;
+                }
+                
                 if (event.key.keysym.sym < 512) {
                     m_currentKeys[event.key.keysym.sym] = true;
+                    
+                    // Log SDL key events for debugging
+                    std::cout << "SDL_KEYDOWN event detected - Key code: " << event.key.keysym.sym 
+                              << ", Scancode: " << event.key.keysym.scancode << std::endl;
                     
                     InputEvent keyEvent;
                     keyEvent.type = EventType::KeyDown;
@@ -64,6 +76,10 @@ void InputManager::processEvents()
             case SDL_KEYUP: {
                 if (event.key.keysym.sym < 512) {
                     m_currentKeys[event.key.keysym.sym] = false;
+                    
+                    // Log SDL key events for debugging
+                    std::cout << "SDL_KEYUP event detected - Key code: " << event.key.keysym.sym 
+                              << ", Scancode: " << event.key.keysym.scancode << std::endl;
                     
                     InputEvent keyEvent;
                     keyEvent.type = EventType::KeyUp;

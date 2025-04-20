@@ -1,4 +1,8 @@
 #include "Visualization.h"
+#include "visualizations/SimpleVisualizer.h"
+#include "visualizations/NeonMeterVisualizer.h"
+#include "visualizations/NeonCityscapeVisualizer.h"
+#include "visualizations/RetroWaveOscilloscopeVisualizer.h"
 #include <iostream>
 #include <cmath>
 
@@ -11,6 +15,7 @@ namespace av {
 Visualization::Visualization(const std::string& name)
     : m_name(name)
     , m_initialized(false)
+    , m_amplificationFactor(20.0f)
 {
 }
 
@@ -53,7 +58,31 @@ void Visualization::onResize(int width, int height)
 
 VisualizationManager::VisualizationManager()
     : m_currentVisualizationIndex(0)
+    , m_amplificationFactor(10.0f)
 {
+    // Create and add visualizations
+    std::cout << "Creating visualizations..." << std::endl;
+    
+    // Create and add a simple visualizer
+    m_visualizations.push_back(std::make_unique<SimpleVisualizer>());
+    
+    // Create and add a neon meter visualizer
+    m_visualizations.push_back(std::make_unique<NeonMeterVisualizer>());
+    
+    // Create and add the new neon cityscape visualizer
+    m_visualizations.push_back(std::make_unique<NeonCityscapeVisualizer>());
+    
+    // Create and add the RetroWave oscilloscope visualizer
+    m_visualizations.push_back(std::make_unique<RetroWaveOscilloscopeVisualizer>());
+    
+    // Set the NeonCityscapeVisualizer as the default visualization
+    m_currentVisualizationIndex = 2; // Index of NeonCityscapeVisualizer
+    
+    // Set the amplification factor for all visualizations
+    setAmplificationFactor(m_amplificationFactor);
+    
+    std::cout << "VisualizationManager created with " << m_visualizations.size() << " visualizations" << std::endl;
+    std::cout << "Starting with visualization: " << m_visualizations[m_currentVisualizationIndex]->getName() << std::endl;
 }
 
 VisualizationManager::~VisualizationManager()
@@ -70,6 +99,23 @@ void VisualizationManager::initialize()
     m_visualizations.push_back(std::make_unique<ParticleVisualization>());
     
     m_currentVisualizationIndex = 0;
+}
+
+void VisualizationManager::addVisualizer(std::unique_ptr<Visualization> visualization)
+{
+    if (visualization) {
+        std::cout << "Adding visualization: " << visualization->getName() << std::endl;
+        m_visualizations.push_back(std::move(visualization));
+    }
+}
+
+void VisualizationManager::setCurrentVisualization(size_t index)
+{
+    if (index < m_visualizations.size()) {
+        m_currentVisualizationIndex = index;
+        std::cout << "Set current visualization to: " << 
+            m_visualizations[m_currentVisualizationIndex]->getName() << std::endl;
+    }
 }
 
 void VisualizationManager::renderCurrentVisualization(Renderer* renderer, const AudioData& audioData)
@@ -122,6 +168,30 @@ std::string VisualizationManager::getCurrentVisualizationName() const
     }
     
     return m_visualizations[m_currentVisualizationIndex]->getName();
+}
+
+void VisualizationManager::setAmplificationFactor(float factor)
+{
+    m_amplificationFactor = factor;
+    
+    // Update the amplification factor for all visualizations
+    for (auto& vis : m_visualizations) {
+        if (vis) {
+            vis->setAmplificationFactor(factor);
+        }
+    }
+    
+    std::cout << "Amplification factor set to " << factor << " for all visualizations" << std::endl;
+}
+
+float VisualizationManager::getAmplificationFactor() const
+{
+    if (m_visualizations.empty() || m_currentVisualizationIndex >= m_visualizations.size()) {
+        return m_amplificationFactor;
+    }
+    
+    // Return the current visualization's amplification factor
+    return m_visualizations[m_currentVisualizationIndex]->getAmplificationFactor();
 }
 
 // --------------------------------------------------------

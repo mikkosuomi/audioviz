@@ -30,10 +30,15 @@ public:
     
     // Get visualization description
     virtual std::string getDescription() const { return ""; }
+    
+    // Amplification control
+    virtual void setAmplificationFactor(float factor) { m_amplificationFactor = factor; }
+    virtual float getAmplificationFactor() const { return m_amplificationFactor; }
 
 protected:
     std::string m_name;
     bool m_initialized;
+    float m_amplificationFactor = 20.0f; // Default amplification
 };
 
 /**
@@ -124,6 +129,12 @@ public:
     // Initialize with default visualizations
     void initialize();
     
+    // Add a visualization to the manager
+    void addVisualizer(std::unique_ptr<Visualization> visualization);
+    
+    // Set the current visualization by index
+    void setCurrentVisualization(size_t index);
+    
     // Render the current visualization
     void renderCurrentVisualization(Renderer* renderer, const AudioData& audioData);
     
@@ -146,10 +157,15 @@ public:
     
     // Get current visualization index
     int getCurrentIndex() const { return m_currentVisualizationIndex; }
+    
+    // Set amplification factor for all visualizations
+    void setAmplificationFactor(float factor);
+    float getAmplificationFactor() const;
 
 private:
     std::vector<std::unique_ptr<Visualization>> m_visualizations;
     size_t m_currentVisualizationIndex;
+    float m_amplificationFactor = 20.0f; // Default value
 };
 
 } // namespace av 

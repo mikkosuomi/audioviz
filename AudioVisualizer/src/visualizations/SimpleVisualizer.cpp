@@ -14,6 +14,7 @@ SimpleVisualizer::SimpleVisualizer()
     , m_barSpacing(2.0f)
     , m_maxBarHeight(300.0f)
     , m_backgroundColor(1.0f, 0.5f, 0.0f, 1.0f) // BRIGHT ORANGE for visibility
+    , m_amplificationFactor(15.0f)
 {
     std::cout << "SimpleVisualizer created - Using BRIGHT ORANGE BACKGROUND for visibility" << std::endl;
 }
@@ -53,11 +54,10 @@ void SimpleVisualizer::render(Renderer* renderer, const AudioData& audioData)
     glEnd();
     
     // Apply amplification to make visualization more responsive
-    const float amplifyFactor = 15.0f; // Increased from 10.0f for better visibility
-    float amplifiedBass = std::min(1.0f, audioData.bass * amplifyFactor);
-    float amplifiedMid = std::min(1.0f, audioData.mid * amplifyFactor);
-    float amplifiedTreble = std::min(1.0f, audioData.treble * amplifyFactor);
-    float amplifiedEnergy = std::min(1.0f, audioData.energy * amplifyFactor);
+    float amplifiedBass = std::min(1.0f, audioData.bass * m_amplificationFactor);
+    float amplifiedMid = std::min(1.0f, audioData.mid * m_amplificationFactor);
+    float amplifiedTreble = std::min(1.0f, audioData.treble * m_amplificationFactor);
+    float amplifiedEnergy = std::min(1.0f, audioData.energy * m_amplificationFactor);
 
     // Render waveform visualization in upper part of the screen
     if (!audioData.waveform.empty()) {
@@ -90,12 +90,9 @@ void SimpleVisualizer::render(Renderer* renderer, const AudioData& audioData)
         // Very thick lines for visibility
         const float lineThickness = 8.0f; // Increased from 5.0f
         
-        // Amplify the waveform for more dramatic effect
-        const float amplificationFactor = 20.0f; // Increased from 10.0f
-        
         // Debug output
         std::cout << "Rendering waveform with " << audioData.waveform.size() 
-                 << " samples, amplification: " << amplificationFactor << std::endl;
+                 << " samples, amplification: " << m_amplificationFactor << std::endl;
         
         // Calculate average amplitude for debugging
         float totalAmplitude = 0.0f;
@@ -109,7 +106,7 @@ void SimpleVisualizer::render(Renderer* renderer, const AudioData& audioData)
         
         std::cout << "Waveform diagnostics - Avg amplitude: " << averageAmplitude 
                  << ", Max amplitude: " << maxAmplitude 
-                 << ", After amplification: " << maxAmplitude * amplificationFactor << std::endl;
+                 << ", After amplification: " << maxAmplitude * m_amplificationFactor << std::endl;
         
         // Draw waveform lines with increased amplitude
         float prevX = 20;
@@ -117,7 +114,7 @@ void SimpleVisualizer::render(Renderer* renderer, const AudioData& audioData)
         const float pointSpacing = static_cast<float>(width - 40) / audioData.waveform.size();
         
         for (size_t i = 0; i < audioData.waveform.size(); ++i) {
-            float sample = audioData.waveform[i] * amplificationFactor; // Apply amplification
+            float sample = audioData.waveform[i] * m_amplificationFactor; // Apply amplification
             sample = std::clamp(sample, -1.0f, 1.0f); // Clamp to prevent extreme values
             
             // If the signal is too small, add a minimum visibility
@@ -160,7 +157,7 @@ void SimpleVisualizer::render(Renderer* renderer, const AudioData& audioData)
             int specIndex = static_cast<int>(index);
             
             // Apply an envelope to emphasize the shape
-            float amplifiedValue = std::min(1.0f, audioData.spectrum[specIndex] * amplifyFactor);
+            float amplifiedValue = std::min(1.0f, audioData.spectrum[specIndex] * m_amplificationFactor);
             
             // Add some bounce based on the bass
             float bounceEffect = 0.0f;

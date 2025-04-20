@@ -348,7 +348,7 @@ void AudioProcessor::update()
                 float compressedRmsEnergy = dynamicRangeCompression(logRmsEnergy, 0.3f, 0.6f);
                 
                 // 3. Apply a moderate boost to increase sensitivity for quieter sounds
-                const float sensitivityBoost = 2.0f; // Reduced from 5.0f
+                const float sensitivityBoost = 1.0f; // Reduced from 2.0f to prevent maxing out
                 float processedEnergy = compressedRmsEnergy * sensitivityBoost;
                 
                 // 4. Ensure the value stays in 0-1 range
@@ -356,7 +356,7 @@ void AudioProcessor::update()
                 
                 // Debug output occasionally to see actual levels
                 static int frameCount = 0;
-                if (frameCount++ % 100 == 0) {
+                if (frameCount++ % 500 == 0) {
                     std::cout << "Raw audio RMS energy: " << rmsEnergy 
                               << " | Log-scaled: " << logRmsEnergy
                               << " | Compressed: " << compressedRmsEnergy
@@ -406,11 +406,11 @@ void AudioProcessor::update()
                     float freq = static_cast<float>(band) / numBands;
                     
                     if (freq < 0.1f) { // Bass frequencies (0-10%)
-                        m_currentAudioData.spectrum[band] *= 1.5f; // Boost bass (reduced from 2.0f)
-                    } else if (freq < 0.3f) { // Low-mid (10-30%)
                         m_currentAudioData.spectrum[band] *= 1.2f; // Reduced from 1.5f
-                    } else if (freq < 0.7f) { // Mid (30-70%)
+                    } else if (freq < 0.3f) { // Low-mid (10-30%)
                         m_currentAudioData.spectrum[band] *= 1.1f; // Reduced from 1.2f
+                    } else if (freq < 0.7f) { // Mid (30-70%)
+                        m_currentAudioData.spectrum[band] *= 1.0f; // Reduced from 1.1f
                     }
                     
                     // Cap at 1.0
@@ -442,9 +442,9 @@ void AudioProcessor::update()
                 }
                 
                 // Normalize by count (with the same processing as before)
-                m_currentAudioData.bass = std::min(1.0f, bassSum / numBands10Pct * 1.2f);  // Reduced from 1.5f
-                m_currentAudioData.mid = std::min(1.0f, midSum / (numBands30Pct - numBands10Pct) * 1.2f);
-                m_currentAudioData.treble = std::min(1.0f, trebleSum / (numBands60Pct - numBands30Pct) * 1.2f);
+                m_currentAudioData.bass = std::min(1.0f, bassSum / numBands10Pct * 1.0f);  // Reduced from 1.2f
+                m_currentAudioData.mid = std::min(1.0f, midSum / (numBands30Pct - numBands10Pct) * 1.0f);
+                m_currentAudioData.treble = std::min(1.0f, trebleSum / (numBands60Pct - numBands30Pct) * 1.0f);
                 
                 // Calculate overall energy - give more weight to bass for a better "feel"
                 // Use the processed RMS energy instead of recalculating
@@ -452,7 +452,7 @@ void AudioProcessor::update()
                 
                 // Add smoothing with previous frame for a more stable visualization
                 if (!m_audioHistory.empty()) {
-                    const float smoothFactor = 0.3f; // 0.0 = no smoothing, 1.0 = full smoothing
+                    const float smoothFactor = 0.5f; // Increased from 0.3f for more stability
                     
                     const AudioData& prevData = m_audioHistory.back();
                     m_currentAudioData.bass = prevData.bass * smoothFactor + m_currentAudioData.bass * (1.0f - smoothFactor);
@@ -464,7 +464,7 @@ void AudioProcessor::update()
                     float prevEnergy = prevData.energy;
                     float energyDelta = std::max(0.0f, m_currentAudioData.energy - prevEnergy);
                     // Apply logarithmic scaling to transients as well for better detection
-                    m_currentAudioData.transient = logScale(energyDelta * 10.0f); // Adjusted from 5.0f
+                    m_currentAudioData.transient = logScale(energyDelta * 5.0f); // Adjusted from 10.0f
                 }
             }
         } else {
@@ -511,7 +511,7 @@ void AudioProcessor::generateTestData()
     
     // Log that we're using test data
     static int counter = 0;
-    if (counter++ % 100 == 0) {
+    if (counter++ % 500 == 0) {
         std::cout << "USING TEST AUDIO DATA - No real audio capture available" << std::endl;
     }
     

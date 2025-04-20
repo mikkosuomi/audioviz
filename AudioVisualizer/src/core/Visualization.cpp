@@ -2,8 +2,17 @@
 #include <algorithm>
 #include <cmath>
 #include <random>
+#include <iostream>
 
 namespace av {
+
+// Base Visualization class implementation
+Visualization::Visualization(const std::string& name)
+    : m_name(name)
+    , m_initialized(false)
+    , m_amplificationFactor(20.0f)
+{
+}
 
 // SpectrumVisualization implementation
 SpectrumVisualization::SpectrumVisualization() : Visualization("Spectrum") {
@@ -295,6 +304,30 @@ std::string VisualizationManager::getCurrentVisualizationName() const {
     
     auto* vis = m_visualizations[m_currentVisualizationIndex].get();
     return vis ? vis->getName() : "Unknown";
+}
+
+void VisualizationManager::setAmplificationFactor(float factor)
+{
+    m_amplificationFactor = factor;
+    
+    // Update the amplification factor for all visualizations
+    for (auto& vis : m_visualizations) {
+        if (vis) {
+            vis->setAmplificationFactor(factor);
+        }
+    }
+    
+    std::cout << "Amplification factor set to " << factor << " for all visualizations" << std::endl;
+}
+
+float VisualizationManager::getAmplificationFactor() const
+{
+    if (m_visualizations.empty() || m_currentVisualizationIndex >= m_visualizations.size()) {
+        return m_amplificationFactor;
+    }
+    
+    // Return the current visualization's amplification factor
+    return m_visualizations[m_currentVisualizationIndex]->getAmplificationFactor();
 }
 
 } // namespace av 

@@ -79,9 +79,19 @@ set(SOURCES
     # Visualizations
     src/visualizations/SimpleVisualizer.cpp
     src/visualizations/Visualization.cpp
+    src/visualizations/MatrixVisualizer.cpp
+    src/visualizations/Bars3DVisualizer.cpp
+    src/visualizations/ParticleFountainVisualizer.cpp
+    src/visualizations/NeonMeterVisualizer.cpp
+    src/visualizations/NeonCityscapeVisualizer.cpp
+    src/visualizations/RetroWaveOscilloscopeVisualizer.cpp
     
     # Scripting
     src/scripting/ScriptEngine.cpp
+    
+    # UI
+    src/ui/Button.cpp
+    src/ui/UI.cpp
     
     # Main entry point
     src/main.cpp
@@ -99,7 +109,7 @@ endif()
 if(WIN32)
     target_link_libraries(AudioVisualizer
         ${OPENGL_LIBRARIES}
-        SDL2::SDL2
+        SDL2::SDL2 
         ${GLEW_LIBRARIES}
         ${LUA_LIBRARIES}
     )
@@ -133,11 +143,12 @@ if(WIN32)
     #        $<TARGET_FILE_DIR:AudioVisualizer>
     #)
     
-    add_custom_command(TARGET AudioVisualizer POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${GLEW_LIBRARY_DIR}/glew32.dll"
-            $<TARGET_FILE_DIR:AudioVisualizer>
-    )
+    # Comment out the GLEW DLL copying since we're using vcpkg which handles this automatically
+    # add_custom_command(TARGET AudioVisualizer POST_BUILD
+    #     COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    #         "${GLEW_LIBRARY_DIR}/glew32.dll"
+    #         $<TARGET_FILE_DIR:AudioVisualizer>
+    # )
     
     # No longer needed - vcpkg handles this
     #add_custom_command(TARGET test_sdl POST_BUILD

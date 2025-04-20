@@ -31,7 +31,31 @@
     <ClCompile Include="C:\Users\Mikko\Desktop\KoodiSotkut\Valopaneeli\AudioVisualizer\src\visualizations\Visualization.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="C:\Users\Mikko\Desktop\KoodiSotkut\Valopaneeli\AudioVisualizer\src\visualizations\MatrixVisualizer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Mikko\Desktop\KoodiSotkut\Valopaneeli\AudioVisualizer\src\visualizations\Bars3DVisualizer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Mikko\Desktop\KoodiSotkut\Valopaneeli\AudioVisualizer\src\visualizations\ParticleFountainVisualizer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Mikko\Desktop\KoodiSotkut\Valopaneeli\AudioVisualizer\src\visualizations\NeonMeterVisualizer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Mikko\Desktop\KoodiSotkut\Valopaneeli\AudioVisualizer\src\visualizations\NeonCityscapeVisualizer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Mikko\Desktop\KoodiSotkut\Valopaneeli\AudioVisualizer\src\visualizations\RetroWaveOscilloscopeVisualizer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="C:\Users\Mikko\Desktop\KoodiSotkut\Valopaneeli\AudioVisualizer\src\scripting\ScriptEngine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Mikko\Desktop\KoodiSotkut\Valopaneeli\AudioVisualizer\src\ui\Button.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Mikko\Desktop\KoodiSotkut\Valopaneeli\AudioVisualizer\src\ui\UI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="C:\Users\Mikko\Desktop\KoodiSotkut\Valopaneeli\AudioVisualizer\src\main.cpp">

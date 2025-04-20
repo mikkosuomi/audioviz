@@ -158,7 +158,12 @@ void Renderer::beginFrame()
         return;
     }
     
-    std::cout << "Beginning frame - setting up rendering" << std::endl;
+    // Only log every 300 frames to reduce console spam
+    static int frameCount = 0;
+    if (frameCount % 300 == 0) {
+        std::cout << "Beginning frame - setting up rendering (frame " << frameCount << ")" << std::endl;
+    }
+    frameCount++;
 
     // Bind our main framebuffer for normal rendering
     glBindFramebuffer(GL_FRAMEBUFFER, m_mainFramebuffer);
@@ -217,8 +222,13 @@ void Renderer::endFrame()
     
     glDisable(GL_TEXTURE_2D);
     
-    // Log that we're rendering
-    std::cout << "Frame rendered to screen from framebuffer texture: " << m_colorTexture << std::endl;
+    // Only log every 300 frames to reduce console spam
+    static int frameCount = 0;
+    if (frameCount % 300 == 0) {
+        std::cout << "Frame rendered to screen from framebuffer texture: " << m_colorTexture 
+                  << " (frame " << frameCount << ")" << std::endl;
+    }
+    frameCount++;
     
     // Swap buffers to display what we just drew
     m_window->swapBuffers();

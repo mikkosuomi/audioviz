@@ -1,0 +1,10 @@
+^C:\USERS\MIKKO\DESKTOP\KOODISOTKUT\VALOPANEELI\AUDIOVISUALIZER\BUILD\CMAKEFILES\1B1B7B64F29D9CD5989B86333DD7C285\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Mikko/Desktop/KoodiSotkut/Valopaneeli/AudioVisualizer -BC:/Users/Mikko/Desktop/KoodiSotkut/Valopaneeli/AudioVisualizer/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/Users/Mikko/Desktop/KoodiSotkut/Valopaneeli/AudioVisualizer/build/AudioVisualizer.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

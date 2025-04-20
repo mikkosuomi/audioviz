@@ -7,11 +7,15 @@
 #include "ScriptEngine.h"
 #include "Visualization.h"
 #include "visualizations/SimpleVisualizer.h"
+#include "UI.h"
 
 #include <memory>
 #include <string>
 
 namespace av {
+
+// Forward declare UI class to avoid circular dependency
+class UI;
 
 /**
  * Main engine class that coordinates all systems
@@ -40,6 +44,26 @@ public:
     // Toggle fullscreen mode
     void toggleFullscreen();
     
+    // Amplification factor control
+    float getAmplificationFactor() const { return m_amplificationFactor; }
+    void setAmplificationFactor(float value) { 
+        m_amplificationFactor = value;
+        // Clamp to reasonable range
+        if (m_amplificationFactor < 1.0f) m_amplificationFactor = 1.0f;
+        if (m_amplificationFactor > 50.0f) m_amplificationFactor = 50.0f;
+        
+        // Update the amplification factor in the visualizers
+        if (m_visualizationManager) {
+            m_visualizationManager->setAmplificationFactor(m_amplificationFactor);
+        }
+        
+        if (m_simpleVisualizer) {
+            m_simpleVisualizer->setAmplificationFactor(m_amplificationFactor);
+        }
+    }
+    void increaseAmplificationFactor(float amount = 1.0f) { setAmplificationFactor(m_amplificationFactor + amount); }
+    void decreaseAmplificationFactor(float amount = 1.0f) { setAmplificationFactor(m_amplificationFactor - amount); }
+    
     // Getters for subsystems
     Window* getWindow() { return m_window.get(); }
     InputManager* getInputManager() { return m_inputManager.get(); }
@@ -48,6 +72,7 @@ public:
     ScriptEngine* getScriptEngine() { return m_scriptEngine.get(); }
     VisualizationManager* getVisualizationManager() { return m_visualizationManager.get(); }
     SimpleVisualizer* getSimpleVisualizer() { return m_simpleVisualizer.get(); }
+    UI* getUI() { return m_ui.get(); }
 
     // Get audio data for scripts
     const AudioData& getAudioData() const { return m_audioProcessor->getAudioData(); }
@@ -70,12 +95,16 @@ private:
     std::unique_ptr<ScriptEngine> m_scriptEngine;
     std::unique_ptr<VisualizationManager> m_visualizationManager;
     std::unique_ptr<SimpleVisualizer> m_simpleVisualizer;
+    std::unique_ptr<UI> m_ui;
     
     // Engine state
     bool m_isRunning;
     double m_lastFrameTime;
     double m_deltaTime;
     bool m_useBuiltInVisualizations;
+    
+    // Visualization settings
+    float m_amplificationFactor = 20.0f; // Default value
 };
 
 } // namespace av 
