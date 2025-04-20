@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Mikko\Desktop\KoodiSotkut\Valopaneeli\AudioVisualizer\build\CMakeFiles\1b1b7b64f29d9cd5989b86333dd7c285\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{FF806947-FD79-31BE-9A21-58641E3299E7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

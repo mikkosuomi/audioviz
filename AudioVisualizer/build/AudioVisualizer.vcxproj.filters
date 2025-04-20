@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\Mikko\Desktop\KoodiSotkut\Valopaneeli\AudioVisualizer\src\core\Engine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Mikko\Desktop\KoodiSotkut\Valopaneeli\AudioVisualizer\src\core\Window.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Mikko\Desktop\KoodiSotkut\Valopaneeli\AudioVisualizer\src\core\InputManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Mikko\Desktop\KoodiSotkut\Valopaneeli\AudioVisualizer\src\audio\AudioProcessor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Mikko\Desktop\KoodiSotkut\Valopaneeli\AudioVisualizer\src\audio\FFTAnalyzer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Mikko\Desktop\KoodiSotkut\Valopaneeli\AudioVisualizer\src\render\Renderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Mikko\Desktop\KoodiSotkut\Valopaneeli\AudioVisualizer\src\render\ParticleSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Mikko\Desktop\KoodiSotkut\Valopaneeli\AudioVisualizer\src\render\ShaderManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Mikko\Desktop\KoodiSotkut\Valopaneeli\AudioVisualizer\src\visualizations\SimpleVisualizer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Mikko\Desktop\KoodiSotkut\Valopaneeli\AudioVisualizer\src\visualizations\Visualization.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Mikko\Desktop\KoodiSotkut\Valopaneeli\AudioVisualizer\src\scripting\ScriptEngine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Mikko\Desktop\KoodiSotkut\Valopaneeli\AudioVisualizer\src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Mikko\Desktop\KoodiSotkut\Valopaneeli\AudioVisualizer\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{2C8C8DA1-FE99-3ABB-9E02-92F42B24A71E}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

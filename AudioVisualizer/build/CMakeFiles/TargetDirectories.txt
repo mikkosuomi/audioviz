@@ -1,0 +1,5 @@
+C:/Users/Mikko/Desktop/KoodiSotkut/Valopaneeli/AudioVisualizer/build/CMakeFiles/AudioVisualizer.dir
+C:/Users/Mikko/Desktop/KoodiSotkut/Valopaneeli/AudioVisualizer/build/CMakeFiles/test_sdl.dir
+C:/Users/Mikko/Desktop/KoodiSotkut/Valopaneeli/AudioVisualizer/build/CMakeFiles/INSTALL.dir
+C:/Users/Mikko/Desktop/KoodiSotkut/Valopaneeli/AudioVisualizer/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/Mikko/Desktop/KoodiSotkut/Valopaneeli/AudioVisualizer/build/CMakeFiles/ZERO_CHECK.dir
